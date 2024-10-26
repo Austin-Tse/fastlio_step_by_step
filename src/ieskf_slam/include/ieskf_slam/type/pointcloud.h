@@ -7,6 +7,7 @@ namespace IESKFSlam
   // 这是在IESKFSlam下的Point类型
   using PCLPointCloud = pcl::PointCloud<Point>;//using关键字用于定义类型别名，它让程序员能够为已存在的类型赋予一个新的名称
   using PCLPointPtr = pcl::PointCloud<Point>::Ptr;
+  using PCLPointCloudPtr = PCLPointCloud::ConstPtr;
   struct PointCloud{
     using Ptr = std::shared_ptr<PCLPointCloud>;//C++智能指针类型，用于自动管理PCLPointCloud对象的生命周期
     TimeStamp time_stamp;

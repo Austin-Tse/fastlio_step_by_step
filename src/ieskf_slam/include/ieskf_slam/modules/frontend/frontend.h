@@ -1,10 +1,15 @@
 #pragma once
 #include <iostream>
-#include "ieskf_slam/modules/modules_base.h"
+#include "ieskf_slam/modules/module_base.h"
 #include "ieskf_slam/type/imu.h"
 #include "ieskf_slam/type/base_type.h"//pointcloud
 #include "ieskf_slam/type/pose.h"
+#include "ieskf_slam/type/measure_group.h"
 // #include <deque>
+
+//v2
+#include "ieskf_slam/modules/ieskf/ieskf.h"
+// #include "ieskf_slam/modules/ieskf/rect_map_manager.h"
 
 namespace IESKFSlam
 {
@@ -25,6 +30,14 @@ namespace IESKFSlam
       bool track();
       //点云读取
       const PCLPointCloud &readCurrentPointCloud();
+
+      //同步
+      bool FrontEnd::syncMeasureGroup(MeasureGroup& mg);
+
+      std::shared_ptr<IESKF> ieskf_ptr;
+      std::shared_ptr<RectMapManager> map_ptr;
+      bool imu_inited = false;
+      double imu_scale = 1;
 
 
 

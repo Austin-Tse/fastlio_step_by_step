@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -std=c++17 -O3 -g  -shared -Wl,-soname,libgtest_maind.so -o ../lib/libgtest_maind.so CMakeFiles/gtest_main.dir/src/gtest_main.cc.o  -Wl,-rpath,/home/xie/workspace/fastlio_handwriting/fastlio_xie/src/ieskf_slam/cmake-build-debug/gtest/lib ../lib/libgtestd.so -lpthread 

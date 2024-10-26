@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: ieskf_slam
+Description: Description of ieskf_slam
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

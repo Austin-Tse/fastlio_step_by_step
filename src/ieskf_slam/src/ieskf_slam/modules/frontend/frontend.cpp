@@ -1,12 +1,12 @@
 #include "ieskf_slam/modules/frontend/frontend.h"
-#include "pcl/common/transforms.h"
-
+#include "ieskf_slam/modules/frontend/rect_map_manager.h"
 
 namespace IESKFSlam
 {
   FrontEnd::FrontEnd(const std::string &config_file_path,const std::string & prefix):ModuleBase(config_file_path,"Front End Module")//实例化FronEnd之前初始化父类ModulBase ，传入两个参数
   {
-
+    ieskf_ptr = std::make_shared<IESKF>(config_file_path,"ieskf");
+    map_ptr = std::make_shared<RectMapManager>(config_file_path,"map");
   }
   FrontEnd::~FrontEnd()
   {
@@ -26,62 +26,75 @@ namespace IESKFSlam
     std::cout<<"receive cloud"<<std::endl;
   }
 
-  void FrontEnd::addPose(const Pose& pose)
-  {
-    pose_deque.push_back(pose);
-    std::cout<<"receive pose"<<std::endl;
-  }
 
   bool FrontEnd::track()
   {
-    if(pointcloud_deque.empty()||pose_deque.empty())//检查队列合法性
+    MeasureGroup mg;
+    if(syncMeasureGroup(mg))
+    {
+      if(!imu_inited)
+      {
+        map_ptr->reset();
+      }
+    }
+  } // namespace IESKF_Slam
+
+  //检查pointcloud_deque imu_deque 是否符合同步的要求
+  bool FrontEnd::syncMeasureGroup(MeasureGroup& mg)
+  {
+    mg.imus.clear();
+    mg.cloud.cloud_ptr->clear();
+
+    if(pointcloud_deque.empty()||imu_deque.empty())
     {
       return false;
     }
 
-    //寻找同一时刻的点云数据    越大证明时间越晚                  这里是比较pose和cloud两个队列，把队列中较早的数据丢弃
+    double imu_end_time = imu_deque.back().time_stamp.sec();
+    double imu_start_time = imu_deque.front().time_stamp.sec();
+    double cloud_start_time = pointcloud_deque.front().time_stamp.sec();//数组头就是指针
+    double cloud_end_time = pointcloud_deque.front().cloud_ptr->back().offset_time/1e9+cloud_start_time;
     
-    while(!pose_deque.empty()&& pose_deque.front().time_stamp.nsec()<pointcloud_deque.front().time_stamp.nsec())
-    {
-      pose_deque.pop_front();
-      std::cout<<"pose time older than pointcloud time, pop pose"<<std::endl;
-    }
-    if(pose_deque.empty())
+
+    if(imu_end_time<cloud_end_time)//imu不能覆盖cloud
     {
       return false;
     }
-
-    while(!pointcloud_deque.empty()&& pose_deque.front().time_stamp.nsec()>pointcloud_deque.front().time_stamp.nsec())
+    if (cloud_end_time<imu_start_time)//点云的时间都老于imu的时间，证明点云数据已经过时
     {
       pointcloud_deque.pop_front();
-      std::cout<<"pointcloud time older than pose time, pop pointcloud"<<std::endl;
-    }
-    if(pointcloud_deque.empty())
-    {
       return false;
     }
 
-    //滤波---
-    VoxelFilter vf;
-    vf.setLeafSize(0.5,0.5,0.5);
-    vf.setInputCloud(pointcloud_deque.front().cloud_ptr);
-    vf.filter(*pointcloud_deque.front().cloud_ptr);
-
-
-    Eigen::Matrix4f trans;
-    trans.setIdentity();
-    trans.block<3,3>(0,0) = pose_deque.front().rotation.toRotationMatrix().cast<float>();//是四元数
-    trans.block<3,1>(0,3) = pose_deque.front().position.cast<float>();//position是向量
-    pcl::transformPointCloud(*pointcloud_deque.front().cloud_ptr,current_pointcloud,trans);//转换点云的位姿  in,out,trans
-
+    mg.cloud = pointcloud_deque.front();
     pointcloud_deque.pop_front();
-    pose_deque.pop_front();
+    mg.lidar_begin_time = cloud_start_time;//该点云的时间段
+    mg.lidar_end_time = cloud_end_time;
+
+    //TODO--添加代码验证imu早于雷达的数据
+    while (!imu_deque.empty() && imu_deque.front().time_stamp.sec() < mg.lidar_begin_time) {
+    imu_deque.pop_front();
+    std::cout<<"imu数据早于最早一帧的点云"<<std::endl;
+    }
+    while (!imu_deque.empty())
+    {
+      if (imu_deque.front().time_stamp.sec()<mg.lidar_end_time) //保留所有在这一帧点云结束之前的数据
+      {
+        //放入mg.deque
+        mg.imus.push_back(imu_deque.front());
+        imu_deque.pop_front();
+        std::cout<<"imu数据晚于最早一帧的点云"<<std::endl;
+      }else{
+        break;
+      }
+    }
+
+    if(mg.imus.size()<5)
+    {
+      return false;
+      std::cout<<"mg.imus.size()<5"<<std::endl;
+    }
     return true;
-  }
 
-
-  const PCLPointCloud& FrontEnd::readCurrentPointCloud()
-  {
-    return current_pointcloud;//返回经过转换的位姿
   }
-} // namespace IESKF_Slam
+}

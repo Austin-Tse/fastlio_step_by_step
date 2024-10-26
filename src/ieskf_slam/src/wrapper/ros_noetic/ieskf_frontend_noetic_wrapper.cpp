@@ -18,7 +18,6 @@ namespace ROSNoetic
     cloud_subscriber = nh.subscribe(lidar_topic,100,&IESKFFrontEndWrapper::lidarCloudMsgCallBack,this);
     imu_subscriber = nh.subscribe(imu_topic,100,&IESKFFrontEndWrapper::lidarCloudMsgCallBack,this);
     odometry_subscriber = nh.subscribe("/odometry",100,&IESKFFrontEndWrapper::odometryMsgCallBack,this);
-
     //读取雷达类型
     int lidar_type = 0;
     nh.param<int>("wrapper/lidar_type",lidar_type,AVIA);

@@ -1,0 +1,2 @@
+CompileFlags: Add: --target=aarch64-linux-gnu
+Remove: -mabi=lp64

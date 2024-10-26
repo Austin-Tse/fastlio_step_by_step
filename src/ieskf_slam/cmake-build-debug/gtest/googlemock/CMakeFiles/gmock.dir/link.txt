@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -std=c++17 -O3 -g  -shared -Wl,-soname,libgmockd.so -o ../lib/libgmockd.so CMakeFiles/gmock.dir/src/gmock-all.cc.o  -Wl,-rpath,/home/xie/workspace/fastlio_handwriting/fastlio_xie/src/ieskf_slam/cmake-build-debug/gtest/lib ../lib/libgtestd.so -lpthread 
