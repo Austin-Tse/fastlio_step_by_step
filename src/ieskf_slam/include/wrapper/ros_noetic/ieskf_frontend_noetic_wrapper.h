@@ -18,8 +18,8 @@ namespace ROSNoetic
     IESKFSlam::FrontEnd::Ptr front_end_ptr;
     ros::Subscriber cloud_subscriber;
     ros::Subscriber imu_subscriber;
-    ros::Subscriber odometry_subscriber;
-    ros::Publisher current_cloud_pub;
+//    ros::Subscriber odometry_subscriber;
+    ros::Publisher curr_cloud_pub;
 
     std::shared_ptr<CommonLidarProcessInterface> lidar_process_ptr;
 
@@ -28,7 +28,7 @@ namespace ROSNoetic
     Eigen::Vector3d curr_r;
     void lidarCloudMsgCallBack(const sensor_msgs::PointCloud2ConstPtr& msg);
     void imuMsgCallBack(const sensor_msgs::ImuPtr& msg);
-    void odometryMsgCallBack(const nav_msgs::OdometryPtr& msg);
+//    void odometryMsgCallBack(const nav_msgs::OdometryPtr& msg);
     void run();
     void publishMsg();
   public:

@@ -4,7 +4,10 @@
 #include "ieskf_slam/type/imu.h"
 #include "ieskf_slam/type/base_type.h"//pointcloud
 #include "ieskf_slam/type/pose.h"
-// #include <deque>
+#include "ieskf_slam/modules/ieskf/ieskf.h"
+#include "ieskf_slam/modules/map/rect_map_manager.h"
+#include "ieskf_slam/type/measure_group.h"
+
 
 namespace IESKFSlam
 {
@@ -18,21 +21,30 @@ namespace IESKFSlam
 
       void addImu(const IMU& imu);
       void addPointCloud(const PointCloud& pointcloud);
-      void addPose(const Pose& pose);
+//      void addPose(const Pose& pose);
 
 
       //跟踪
       bool track();
       //点云读取
       const PCLPointCloud &readCurrentPointCloud();
+      bool syncMeasureGroup(MeasureGroup&mg);
+      void initState(MeasureGroup&mg);
 
 
 
     private:
       std::deque<IMU> imu_deque;
       std::deque<PointCloud> pointcloud_deque;
-      std::deque<Pose> pose_deque;
+//      std::deque<Pose> pose_deque;
       PCLPointCloud current_pointcloud;
+
+      //v2
+      std::shared_ptr<IESKF> ieskf_ptr;
+      std::shared_ptr<RectMapManager> map_ptr;
+      bool imu_inited = false;
+      double imu_scale = 1;
+
 
   };
 } // namespace IESKFSlam
