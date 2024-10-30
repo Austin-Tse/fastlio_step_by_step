@@ -136,4 +136,9 @@ namespace IESKFSlam
         }
         return ;
     }
+    IESKF::State18 FrontEnd::readState() {
+        return ieskf_ptr->getX();
+    }
+
+
 } // namespace IESKFSlam

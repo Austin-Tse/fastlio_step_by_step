@@ -32,6 +32,9 @@ namespace IESKFSlam
       void initState(MeasureGroup&mg);
 
 
+      //读取状态  State定义在IESKF中
+      IESKF::State18 readState();
+
 
     private:
       std::deque<IMU> imu_deque;

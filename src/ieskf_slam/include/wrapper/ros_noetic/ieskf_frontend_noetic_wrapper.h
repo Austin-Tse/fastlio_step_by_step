@@ -21,6 +21,8 @@ namespace ROSNoetic
 //    ros::Subscriber odometry_subscriber;
     ros::Publisher curr_cloud_pub;
 
+    ros::Publisher path_pub;
+
     std::shared_ptr<CommonLidarProcessInterface> lidar_process_ptr;
 
     IESKFSlam::PCLPointCloud curr_cloud;

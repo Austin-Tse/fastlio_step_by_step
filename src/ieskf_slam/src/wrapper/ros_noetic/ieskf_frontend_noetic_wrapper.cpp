@@ -1,6 +1,8 @@
 #include "wrapper/ros_noetic/ieskf_frontend_noetic_wrapper.h"
 #include "ieskf_slam/globaldefine.h"
 
+#include "nav_msgs/Path.h"
+
 
 namespace ROSNoetic
 {
@@ -20,6 +22,9 @@ namespace ROSNoetic
     imu_subscriber = nh.subscribe(imu_topic,100,&IESKFFrontEndWrapper::imuMsgCallBack,this);
 //    odometry_subscriber = nh.subscribe("/odometry",100,&IESKFFrontEndWrapper::odometryMsgCallBack,this);
 
+
+    //发布Path
+    path_pub = nh.advertise<nav_msgs::Path>("path",100);
     //读取雷达类型
     int lidar_type = 0;
     nh.param<int>("wrapper/lidar_type",lidar_type,AVIA);
@@ -84,11 +89,24 @@ namespace ROSNoetic
 
     void IESKFFrontEndWrapper::publishMsg()
     {
-      auto cloud = front_end_ptr->readCurrentPointCloud();
-      sensor_msgs::PointCloud2 msg;
-      pcl::toROSMsg(cloud,msg);
-      msg.header.frame_id = "map";
-      curr_cloud_pub.publish(msg);//发布话题信息
+//      auto cloud = front_end_ptr->readCurrentPointCloud();
+//      sensor_msgs::PointCloud2 msg;
+//      pcl::toROSMsg(cloud,msg);
+//      msg.header.frame_id = "map";
+//      curr_cloud_pub.publish(msg);//发布话题信息
+        static nav_msgs::Path path;
+        path.header.frame_id = "map";
+        auto x = front_end_ptr->readState();
+
+        geometry_msgs::PoseStamped psd;
+        psd.pose.position.x = x.position.x();
+        psd.pose.position.y = x.position.y();
+        psd.pose.position.z = x.position.z();
+
+        path.poses.push_back(psd);
+        path_pub.publish(path);
+
+
     }
     // void IESKFF lidarCloudMsgCallBack(const sensor_msgs::PointCloud2ConstPtr& msg)
     // {
