@@ -7,6 +7,7 @@
 #include "ieskf_slam/modules/ieskf/ieskf.h"
 #include "ieskf_slam/modules/map/rect_map_manager.h"
 #include "ieskf_slam/type/measure_group.h"
+#include "ieskf_slam/modules/frontback_Propagate/frontback_propagate.h"
 
 
 namespace IESKFSlam
@@ -47,6 +48,9 @@ namespace IESKFSlam
       std::shared_ptr<RectMapManager> map_ptr;
       bool imu_inited = false;
       double imu_scale = 1;
+      //v3
+      std::shared_ptr<FrontbackPropagate> fbpropagate_ptr;
+
 
 
   };

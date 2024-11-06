@@ -41,9 +41,19 @@ include
 
 
 
+#SET(IESKF_SLAM_FILE
+#    src/ieskf_slam/modules/frontend/frontend.cpp
+#)
+
 SET(IESKF_SLAM_FILE
-    src/ieskf_slam/modules/frontend/frontend.cpp
+        src/ieskf_slam/modules/frontend/frontend.cpp
+        src/ieskf_slam/modules/ieskf/ieskf.cpp
+        src/ieskf_slam/modules/map/rect_map_manager.cpp
+        src/ieskf_slam/modules/frontback_Propagate/frontback_propagate.cpp
 )
+
+
+
 SET(NOETIC_FRONTEND_WRAPPER_FILE
     src/wrapper/ros_noetic/ieskf_frontend_noetic_wrapper.cpp
         include/ieskf_slam/modules/ieskf/ieskf.h
@@ -52,7 +62,9 @@ SET(NOETIC_FRONTEND_WRAPPER_FILE
         include/ieskf_slam/type/measure_group.h
         src/ieskf_slam/modules/map/rect_map_manager.cpp
         src/ieskf_slam/modules/ieskf/ieskf.cpp
-        src/ieskf_slam/modules/ieskf/ieskf.cpp
+        include/ieskf_slam/math/SO3.h
+        include/ieskf_slam/modules/frontback_Propagate/frontback_propagate.h
+        src/ieskf_slam/modules/frontback_Propagate/frontback_propagate.cpp
 )
 
 ## Declare a C++ executable

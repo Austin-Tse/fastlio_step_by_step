@@ -6,12 +6,14 @@
 #include "ieskf_slam/modules/modules_base.h"
 #include "ieskf_slam/type/imu.h"
 #include <Eigen/Dense>
+#include "ieskf_slam/math/SO3.h"
 
 namespace IESKFSlam
 {
     class IESKF:private ModuleBase
     {
     public:
+        using Ptr = std::shared_ptr<IESKF>;
         struct State18
         {
             Eigen::Quaterniond  rotation;
@@ -31,10 +33,12 @@ namespace IESKFSlam
         };
     private:
         State18 X;
+        Eigen::Matrix<double,18,18> P;
+        Eigen::Matrix<double,12,12> Q;
     public:
         IESKF(const std::string & config_path,const std::string& prefix);
         ~IESKF();
-        void predict(const IMU&imu,double dt);
+        void predict(IMU imu,double dt);
         bool update();
         const State18&getX();
         void setX(const State18&x_in);

@@ -23,8 +23,7 @@ namespace ROSNoetic
 //    odometry_subscriber = nh.subscribe("/odometry",100,&IESKFFrontEndWrapper::odometryMsgCallBack,this);
 
 
-    //发布Path
-    path_pub = nh.advertise<nav_msgs::Path>("path",100);
+
     //读取雷达类型
     int lidar_type = 0;
     nh.param<int>("wrapper/lidar_type",lidar_type,AVIA);
@@ -37,6 +36,8 @@ namespace ROSNoetic
       exit(100);//如果报错退出，那么可以捕获100
     }
     curr_cloud_pub = nh.advertise<sensor_msgs::PointCloud2>("curr_cloud",100);
+    //发布Path
+    path_pub = nh.advertise<nav_msgs::Path>("path",100);
     run();
   }
 
@@ -81,6 +82,7 @@ namespace ROSNoetic
         ros::spinOnce();
         if(front_end_ptr->track())
         {
+            std::cout<<"执行发布函数"<<std::endl;
           publishMsg();
         }
       }
@@ -96,12 +98,12 @@ namespace ROSNoetic
 //      curr_cloud_pub.publish(msg);//发布话题信息
         static nav_msgs::Path path;
         path.header.frame_id = "map";
-        auto x = front_end_ptr->readState();
+        auto X = front_end_ptr->readState();
 
         geometry_msgs::PoseStamped psd;
-        psd.pose.position.x = x.position.x();
-        psd.pose.position.y = x.position.y();
-        psd.pose.position.z = x.position.z();
+        psd.pose.position.x = X.position.x();
+        psd.pose.position.y = X.position.y();
+        psd.pose.position.z = X.position.z();
 
         path.poses.push_back(psd);
         path_pub.publish(path);

@@ -25,9 +25,9 @@ namespace ROSNoetic
 
     std::shared_ptr<CommonLidarProcessInterface> lidar_process_ptr;
 
-    IESKFSlam::PCLPointCloud curr_cloud;
-    Eigen::Quaterniond curr_q;
-    Eigen::Vector3d curr_r;
+//    IESKFSlam::PCLPointCloud curr_cloud;
+//    Eigen::Quaterniond curr_q;
+//    Eigen::Vector3d curr_r;
     void lidarCloudMsgCallBack(const sensor_msgs::PointCloud2ConstPtr& msg);
     void imuMsgCallBack(const sensor_msgs::ImuPtr& msg);
 //    void odometryMsgCallBack(const nav_msgs::OdometryPtr& msg);

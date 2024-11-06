@@ -8,12 +8,14 @@
  */
 #include "ieskf_slam/modules/frontend/frontend.h"
 
+
 namespace IESKFSlam
 {
     FrontEnd::FrontEnd(const std::string &config_file_path,const std::string & prefix ):ModuleBase(config_file_path,prefix,"Front End Module")
     {
         ieskf_ptr = std::make_shared<IESKF>(config_file_path,"ieskf");
         map_ptr  = std::make_shared<RectMapManager>(config_file_path,"map");
+        fbpropagate_ptr = std::make_shared<FrontbackPropagate>();
     }
 
     FrontEnd::~FrontEnd()
@@ -37,6 +39,7 @@ namespace IESKFSlam
                 initState(mg);
                 return false;
             }
+            fbpropagate_ptr->propagate(mg,ieskf_ptr);
             std::cout<<mg.imus.size()<<" scale: "<<imu_scale<<std::endl;
             return true;
         }
@@ -60,7 +63,6 @@ namespace IESKFSlam
 
         //当imu末尾数据早于这一帧的pointcloud数据的结束点云数据，无法铺满两帧之间，点云后半段是空的
         if (imu_end_time<cloud_end_time){
-            std::cout<<"imu_end_time<cloud_end_time"<<std::endl;
             return false;
         }
 
@@ -69,13 +71,6 @@ namespace IESKFSlam
         {
             pointcloud_deque.pop_front();
             std::cout<<"imu_start_time>cloud_end_time"<<std::endl;
-            return false;
-        }
-
-        if(imu_start_time<cloud_start_time)
-        {
-            imu_deque.pop_front();
-            std::cout<<"imu_start_time<cloud_start_time"<<std::endl;
             return false;
         }
 
@@ -127,6 +122,9 @@ namespace IESKFSlam
 
             x.bg /=double(imu_count);//求得平均偏置
             imu_scale  = GRAVITY/mean_acc.norm();
+
+            fbpropagate_ptr->imu_scale = imu_scale;
+            fbpropagate_ptr->last_imu = mg.imus.back();//------TODO
             std::cout<<"imu_scale"<<imu_scale<<std::endl;
             // 重力的符号为负 就和fastlio公式一致
             x.gravity = - mean_acc / mean_acc.norm() * GRAVITY;
