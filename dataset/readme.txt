@@ -1,0 +1,2 @@
+pointcloud.tar.gz 为转换为PointCloud2消息格式的rosbag
+livox_custom.tar.gz 为原始的livox消息格式

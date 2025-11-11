@@ -1,3 +1,15 @@
 /build/
 /devel/
 /.vscode/
+dataset/street08_cloud_pose.bag.gz
+.gitignore
+dataset/street_04_lig.tar.xz
+dataset/street_03_lig.tar.xz
+.gitignore
+dataset/pointcloud.tar.gz
+dataset/o.bag
+dataset/cloud.bag
+.gitignore
+.gitignore
+dataset/street_05_lig.tar.xz
+dataset/street_08_filter.bag.gz
