@@ -9,11 +9,17 @@ namespace IESKFSlam
     void FrontbackPropagate::propagate(IESKFSlam::MeasureGroup &mg, IESKF::Ptr ieskf_ptr) {
         //将每一帧的点云按照采集的时间从大到小排序
         std::sort(mg.cloud.cloud_ptr->points.begin(),mg.cloud.cloud_ptr->points.end(),[](Point x,Point y)->bool{return x.offset_time<y.offset_time;});
+        
+        std::cout << "[PROPAGATE] IMU count: " << mg.imus.size() 
+                  << ", time span: [" << mg.lidar_begin_time << ", " << mg.lidar_end_time 
+                  << "], duration: " << (mg.lidar_end_time - mg.lidar_begin_time) << "s" << std::endl;
+        
         mg.imus.push_front(last_imu);
-
         double dt = 0;
         IMU in;
         IESKF::State18 imu_state;
+        
+        int imu_idx = 0;
         for (auto it_imu= mg.imus.begin();it_imu<(mg.imus.end()-1) ;it_imu ++) {
             auto &&head = *(it_imu);
             auto &&tail = *(it_imu+1);
@@ -21,11 +27,23 @@ namespace IESKFSlam
             auto angvel_avr = 0.5*(head.gyroscope+tail.gyroscope);
             auto acc_avr = 0.5 * (head.acceleration+tail.acceleration) * imu_scale;//TODO
             double dt = tail.time_stamp.sec() - head.time_stamp.sec();//IMU的时间
+            
+            // 检查dt是否合理
+            if (dt < 0 || dt > 0.1) {
+                std::cout << "[WARN] Abnormal IMU dt at idx=" << imu_idx << ": " << dt << "s" << std::endl;
+            }
+            
             in.acceleration = acc_avr;
             in.gyroscope = angvel_avr;
             ieskf_ptr->predict(in,dt);
+            imu_idx++;
         }
         dt = mg.lidar_end_time-mg.imus.back().time_stamp.sec();//最后一个 IMU 数据点到激光雷达结束时间的时间差 dt，并进行一次预测
+        
+        if (dt < 0 || dt > 0.1) {
+            std::cout << "[WARN] Final predict dt abnormal: " << dt << "s" << std::endl;
+        }
+        
         ieskf_ptr->predict(in,dt);
         //记录最后一个imu数据
         last_imu = mg.imus.back();

@@ -108,6 +108,13 @@ namespace ROSNoetic
         path.poses.push_back(psd);
         path_pub.publish(path);
 
+        IESKFSlam::PCLPointCloud cloud = front_end_ptr->readCurrentPointCloud();
+        pcl::transformPointCloud(cloud,cloud,IESKFSlam::compositeTransform(X.rotation,X.position).cast<float>());
+        sensor_msgs::PointCloud2 msg;
+        pcl::toROSMsg(cloud,msg);
+        msg.header.frame_id = "map";
+        curr_cloud_pub.publish(msg);//发布话题信息
+
 
     }
     // void IESKFF lidarCloudMsgCallBack(const sensor_msgs::PointCloud2ConstPtr& msg)

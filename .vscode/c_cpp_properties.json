@@ -7,9 +7,10 @@
             },
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/pcl-1.10",
+·                "/usr/include/eigen3",
                 "/opt/ros/noetic/include/**",
-                "/usr/include/eigen3"
+                "/usr/include/eigen3",
+                "/usr/include/pcl-1.10"
             ],
             "name": "linux-gcc-x64",
             "intelliSenseMode": "linux-gcc-x64",
