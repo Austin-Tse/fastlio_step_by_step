@@ -31,10 +31,17 @@ namespace IESKFSlam
                 gravity = Eigen::Vector3d ::Zero();
             }
         };
+        class CalZHInterface
+        {
+            public:
+                virtual bool calculate(const State18 &state,Eigen::MatrixXd&Z,Eigen::MatrixXd&H)=0;
+        };
+        std::shared_ptr<CalZHInterface> calc_zh_ptr;
     private:
         State18 X;
         Eigen::Matrix<double,18,18> P;
         Eigen::Matrix<double,12,12> Q;
+        int iter_times = 10;
     public:
         IESKF(const std::string & config_path,const std::string& prefix);
         ~IESKF();
@@ -42,5 +49,6 @@ namespace IESKFSlam
         bool update();
         const State18&getX();
         void setX(const State18&x_in);
+        Eigen::Matrix<double,18,1> getErrorState18(const IESKF::State18 &x_est,const IESKF::State18 &x_true);
     };
 }

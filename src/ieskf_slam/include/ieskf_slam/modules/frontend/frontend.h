@@ -8,7 +8,7 @@
 #include "ieskf_slam/modules/map/rect_map_manager.h"
 #include "ieskf_slam/type/measure_group.h"
 #include "ieskf_slam/modules/frontback_Propagate/frontback_propagate.h"
-
+#include "ieskf_slam/modules/frontend/lio_zh_model.h"
 
 namespace IESKFSlam
 {
@@ -50,6 +50,14 @@ namespace IESKFSlam
       double imu_scale = 1;
       //v3
       std::shared_ptr<FrontbackPropagate> fbpropagate_ptr;
+
+      //v4
+      VoxelFilter voxel_filter;
+      Eigen::Quaterniond extrin_r_q;
+      Eigen::Vector3d extrin_t_v;
+
+      LIOZHModel::Ptr lio_zh_model_ptr;
+      PCLPointCloudPtr filter_point_cloud_ptr;
 
 
 

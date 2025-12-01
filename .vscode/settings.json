@@ -136,6 +136,20 @@
     "concepts": "cpp",
     "numbers": "cpp",
     "semaphore": "cpp",
-    "stop_token": "cpp"
+    "stop_token": "cpp",
+    "csetjmp": "cpp",
+    "csignal": "cpp",
+    "codecvt": "cpp",
+    "forward_list": "cpp",
+    "filesystem": "cpp",
+    "regex": "cpp",
+    "rope": "cpp",
+    "slist": "cpp",
+    "future": "cpp",
+    "scoped_allocator": "cpp",
+    "valarray": "cpp",
+    "netfwd": "cpp",
+    "cuchar": "cpp",
+    "charconv": "cpp"
   }
 }
