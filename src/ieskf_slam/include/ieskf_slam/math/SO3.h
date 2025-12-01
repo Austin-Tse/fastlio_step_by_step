@@ -47,4 +47,14 @@ namespace IESKFSlam
         }
         return  res;
     }
+
+    //? 将旋转矩阵转换为so3向量
+    static Eigen::Vector3d SO3Log(const Eigen::Matrix3d &R)
+    {
+       double theta = (R.trace()>3-1e6)?0:acos(R.trace()-1)/2.0;//?计算旋转角度     罗德里格斯公式的逆运算,如果迹接近3，说明旋转角度接近0
+        //这里的SO3是旋转矩阵，不是反对称矩阵
+       Eigen::Vector3d so3(R(2,1)-R(1,2),R(0,2)-R(2,0),R(1,0)-R(0,1));
+
+       return fabs(theta)<0.001?(0.5*so3):(0.5*theta/sin(theta)*so3);     //?如果数值很小时，theta/sin(theta)计算不稳定     这里计算的是旋转向量，所以要乘上theta
+    }
 }

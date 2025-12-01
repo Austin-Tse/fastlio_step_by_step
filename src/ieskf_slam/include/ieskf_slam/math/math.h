@@ -7,7 +7,7 @@
 
 namespace IESKFSlam
 {//传入四元数和变换向量t，返回矩阵
-    Eigen::Matrix4d compositeTransform(const Eigen::Quaterniond &q,const Eigen::Vector3d &t)
+    inline Eigen::Matrix4d compositeTransform(const Eigen::Quaterniond &q,const Eigen::Vector3d &t)
     {
         Eigen::Matrix4d ans;
         ans.setIdentity();
