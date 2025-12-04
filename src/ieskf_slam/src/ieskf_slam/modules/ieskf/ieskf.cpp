@@ -17,15 +17,15 @@ namespace IESKFSlam
     double cov_gyroscope,cov_acceleration,cov_bias_acceleration,cov_bias_gyroscope,measurement_noise_;
 
         readParam("cov_gyroscope",cov_gyroscope,0.1);//这是个模版函数，传入的是什么类型就读什么类型
-        readParam("cov_accleration",cov_acceleration,0.1);
+        readParam("cov_acceleration",cov_acceleration,0.1);
         readParam("cov_bias_acceleration",cov_bias_acceleration,0.1);
-        readParam("cov_bias_gyroscope",cov_gyroscope,0.1);
+        readParam("cov_bias_gyroscope",cov_bias_gyroscope,0.1);
         readParam("measurement_noise",measurement_noise_,0.01);
 
         Q.block<3,3>(0,0).diagonal() = Eigen::Vector3d{cov_gyroscope,cov_gyroscope,cov_gyroscope};
-        Q.block<3,3>(3,3).diagonal() = Eigen::Vector3d {cov_acceleration,cov_acceleration,cov_gyroscope};
-        Q.block<3,3>(6,6).diagonal() = Eigen::Vector3d {cov_bias_gyroscope,cov_bias_gyroscope,cov_bias_gyroscope};
-        Q.block<3,3>(9,9).diagonal() = Eigen::Vector3d {cov_bias_acceleration,cov_bias_acceleration,cov_acceleration};
+        Q.block<3,3>(3,3).diagonal() = Eigen::Vector3d{cov_acceleration,cov_acceleration,cov_acceleration};
+        Q.block<3,3>(6,6).diagonal() = Eigen::Vector3d{cov_bias_gyroscope,cov_bias_gyroscope,cov_bias_gyroscope};
+        Q.block<3,3>(9,9).diagonal() = Eigen::Vector3d{cov_bias_acceleration,cov_bias_acceleration,cov_bias_acceleration};
 
         X.ba.setZero();
         X.bg.setZero();

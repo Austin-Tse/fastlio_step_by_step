@@ -1,22 +1,23 @@
 {
     "configurations": [
         {
-            "browse": {
-                "databaseFilename": "${default}",
-                "limitSymbolsToIncludedHeaders": false
-            },
+            "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-·                "/usr/include/eigen3",
-                "/opt/ros/noetic/include/**",
+                "/home/mars_ugv/workspace/fastlio_step_by_step/**",
                 "/usr/include/eigen3",
                 "/usr/include/pcl-1.10"
             ],
-            "name": "linux-gcc-x64",
-            "intelliSenseMode": "linux-gcc-x64",
+            "defines": [],
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "${default}",
-            "cppStandard": "${default}"
+            "cStandard": "c17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerPathInCppPropertiesJson": "/usr/bin/gcc",
+            "mergeConfigurations": false,
+            "recursiveIncludes": {},
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
         }
     ],
     "version": 4
