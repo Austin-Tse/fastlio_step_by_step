@@ -10,8 +10,8 @@ front_end:
   filter_leaf_size: 0.5
 
 map:  # 新增地图参数节点
-  map_resolution: 0.52
-  map_side_length_2: 100.0
+  map_resolution: 0.50
+  map_side_length_2: 500.0
 
 ieskf:
   cov_gyroscope: 0.1
