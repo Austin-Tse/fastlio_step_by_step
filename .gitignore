@@ -13,3 +13,6 @@ dataset/cloud.bag
 .gitignore
 dataset/street_05_lig.tar.xz
 dataset/street_08_filter.bag.gz
+dataset/street_05_lig.bag
+dataset/street_08_filter.bag
+dataset/street08_cloud_pose.bag
