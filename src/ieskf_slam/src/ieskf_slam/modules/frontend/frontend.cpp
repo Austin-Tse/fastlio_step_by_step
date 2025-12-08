@@ -67,10 +67,13 @@ namespace IESKFSlam
     FrontEnd::~FrontEnd()
     {
     }
+    //传入imu数据
     void FrontEnd::addImu(const IMU&imu){
         imu_deque.push_back(imu);
-//        std::cout<<"receive imu"<<std::endl;
+       std::cout<<"receive imu"<<std::endl;
     }
+
+    //传入点云数据
     void FrontEnd::addPointCloud(const PointCloud&pointcloud){
         pointcloud_deque.push_back(pointcloud);
         std::cout<<"receive cloud"<<std::endl;
@@ -126,7 +129,10 @@ namespace IESKFSlam
     const PCLPointCloud& FrontEnd::readCurrentPointCloud(){
         return *filter_point_cloud_ptr;
     }
+
+
     bool FrontEnd::syncMeasureGroup(MeasureGroup&mg){
+        //同步一帧点云和对应的imu数据
         mg.imus.clear();
         mg.cloud.cloud_ptr->clear();
         if ( pointcloud_deque.empty()||imu_deque.empty())
@@ -155,6 +161,7 @@ namespace IESKFSlam
 
         mg.cloud = pointcloud_deque.front();//取出点云数据
         pointcloud_deque.pop_front();
+        //设置点云的起始和结束时间
         mg.lidar_begin_time = cloud_start_time;
         mg.lidar_end_time = cloud_end_time;
 
@@ -175,6 +182,7 @@ namespace IESKFSlam
         }
         return true;
     }
+    // 初始化，利用多帧imu数据计算初始加速度均值和陀螺仪偏置
     void FrontEnd::initState(MeasureGroup&mg){
         static int imu_count = 0;
         static Eigen::Vector3d mean_acc{0,0,0};
@@ -186,6 +194,7 @@ namespace IESKFSlam
 
         std::cout << "[INIT] Collecting IMU data for initialization... current count: " << imu_count << std::endl;
         
+        // 遍历这一帧点云中的所有imu数据，累加加速度和陀螺仪偏置
         for (size_t i = 0; i < mg.imus.size(); i++)
         {
             imu_count++;
@@ -198,37 +207,40 @@ namespace IESKFSlam
         if (imu_count >= 5)
         {
             auto x = ieskf.getX();
-            mean_acc /=double(imu_count);//求得平均值
+            mean_acc /=double(imu_count);//求得平均加速度
 
             x.bg /=double(imu_count);//求得平均偏置
-            imu_scale  = GRAVITY/mean_acc.norm();
+            imu_scale  = GRAVITY/mean_acc.norm();//计算imu尺度因子
 
-            fbpropagate_ptr->imu_scale = imu_scale;
-            fbpropagate_ptr->last_imu = mg.imus.back();//------TODO
             
             std::cout << "========== IMU INITIALIZATION COMPLETE =========="<< std::endl;
             std::cout << "imu_scale: " << imu_scale << std::endl;
             std::cout << "mean_acc: [" << mean_acc.transpose() << "], norm: " << mean_acc.norm() << std::endl;
             std::cout << "bg (gyro bias): [" << x.bg.transpose() << "]" << std::endl;
             
-            // 重力的符号为负 就和fastlio公式一致
+            // 重力的符号为负 就和fastlio公式一致  重力对齐，初始化方向为imu初始静止的方向
             x.gravity = - mean_acc / mean_acc.norm() * GRAVITY;
             std::cout << "gravity: [" << x.gravity.transpose() << "]" << std::endl;
             
             // 检查初始化的合理性
-            if (imu_scale < 0.5 || imu_scale > 2.0) {
+            if ((imu_scale < 0.5 || imu_scale > 2.0) && (imu_scale < 9.0 || imu_scale > 11.0)) {
                 std::cout << "[WARN] IMU scale abnormal! Expected ~1.0, got " << imu_scale << std::endl;
             }
             if (x.bg.norm() > 0.5) {
                 std::cout << "[WARN] Gyro bias large: " << x.bg.norm() << " rad/s" << std::endl;
             }
             std::cout << "================================================="<< std::endl;
-
+            
             ieskf.setX(x);
             imu_inited = true;
+            fbpropagate_ptr->imu_scale = imu_scale;//传递imu尺度因子
+            fbpropagate_ptr->last_imu = mg.imus.back();//当前帧的最后一个imu作为下一帧的第一个imu
+            fbpropagate_ptr->last_lidar_end_time_ = mg.lidar_end_time;//当前帧的点云结束时间作为下一帧的点云开始时间
         }
         return ;
     }
+
+
     IESKF::State18 FrontEnd::readState() {
         return ieskf_ptr->getX();
     }

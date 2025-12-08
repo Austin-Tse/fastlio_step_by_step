@@ -17,6 +17,11 @@ namespace IESKFSlam
     private:
         PCLPointCloudPtr local_map_ptr;
         KDTreePtr kdtree_ptr;
+        PCLPointCloudPtr current_cloud_ptr;
+        KDTreeConstPtr global_map_kdtree_ptr;
+
+        float map_resolution = 0.5f;
+        float map_size_length_2 = 500.0f;
     public:
         RectMapManager(const std::string &config_file_path,const std::string &prefix);
         ~RectMapManager();

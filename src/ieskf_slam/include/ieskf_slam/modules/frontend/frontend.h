@@ -38,7 +38,9 @@ namespace IESKFSlam
 
 
     private:
+      //存储从外部话题传入的imu数据
       std::deque<IMU> imu_deque;
+      //存储从外部话题传入的点云数据
       std::deque<PointCloud> pointcloud_deque;
 //      std::deque<Pose> pose_deque;
       PCLPointCloud current_pointcloud;
