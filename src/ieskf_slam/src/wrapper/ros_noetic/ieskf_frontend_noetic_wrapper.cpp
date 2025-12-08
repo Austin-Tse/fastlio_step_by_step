@@ -16,6 +16,7 @@ namespace ROSNoetic
     std::cout<<"lidar_topic: "<<lidar_topic<<std::endl;
     std::cout<<"imu_topic: "<<imu_topic<<std::endl;
     front_end_ptr = std::make_shared<IESKFSlam::FrontEnd>(CONFIG_DIR+config_file_name,"front_end");//构造共享指针对象，并使用指定的配置文件进行初始化
+    std::cout <<"WORKD_DIR: %s"<<WORKD_DIR.c_str()<<std::endl;
 
     //发布者和订阅者
     cloud_subscriber = nh.subscribe(lidar_topic,100,&IESKFFrontEndWrapper::lidarCloudMsgCallBack,this);
@@ -30,6 +31,10 @@ namespace ROSNoetic
     if(lidar_type == AVIA)//使用枚举类型
     {
       lidar_process_ptr = std::make_shared<AVIAProcess>();
+    }
+    else if(lidar_type == VELO)
+    {
+      lidar_process_ptr = std::make_shared<VelodyneProcess>();
     }
     else{
       std::cout <<"unsupport lidar type"<<std::endl;

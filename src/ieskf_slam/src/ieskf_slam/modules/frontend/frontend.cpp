@@ -60,12 +60,25 @@ namespace IESKFSlam
             filter_point_cloud_ptr,
             map_ptr->getLocalMap()
         );
-
+        readParam("enable_record",enable_record,true);
+        readParam("record_file_name",record_file_name,std::string("frontend_record.txt"));
+        if (enable_record)
+        {
+            record_file.open(RESULT_DIR+record_file_name,std::ios::out);
+            if (!record_file.is_open())
+            {
+                std::cerr<<"Failed to open record file: "<<record_file_name<<std::endl;
+            }else{
+                std::cout<<"Record file opened: "<<record_file_name<<std::endl;
+            }
+        }
+        print_table();
         
     }
 
     FrontEnd::~FrontEnd()
     {
+        record_file.close();
     }
     //传入imu数据
     void FrontEnd::addImu(const IMU&imu){
@@ -121,7 +134,16 @@ namespace IESKFSlam
 
             Eigen::Quaterniond rota = Eigen::Quaterniond::Identity();
             Eigen::Vector3d trans = Eigen::Vector3d::Zero();
+            if (enable_record)
+            {
+                // 设置15位小数
+                record_file<<std::setprecision(15)<<mg.lidar_end_time<<" "
+                           <<x.position.x()<<" "<<x.position.y()<<" "<<x.position.z()<<" "
+                           <<x.rotation.x()<<" "<<x.rotation.y()<<" "<<x.rotation.z()<<" "<<x.rotation.w()<<std::endl;
+            }
             map_ptr->addScan(filter_point_cloud_ptr,x.rotation,x.position);
+
+            
             return true;
         }
         return false;

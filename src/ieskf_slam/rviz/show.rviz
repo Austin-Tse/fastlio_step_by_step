@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /map1
         - /curr1
         - /Path1
       Splitter Ratio: 0.5
@@ -161,7 +162,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 947.7183837890625
+      Distance: 129.9664306640625
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -169,17 +170,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 250.52737426757812
-        Y: -38.11995315551758
-        Z: 56.64091491699219
+        X: 21.57352638244629
+        Y: -53.75098419189453
+        Z: 201.7171173095703
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2547962665557861
+      Pitch: 0.9147969484329224
       Target Frame: <Fixed Frame>
-      Yaw: 3.8704476356506348
+      Yaw: 3.8154544830322266
     Saved: ~
 Window Geometry:
   Displays:

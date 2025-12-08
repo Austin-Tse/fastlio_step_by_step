@@ -5,12 +5,14 @@
 #include "sensor_msgs/Imu.h"
 #include "nav_msgs/Odometry.h"
 #include "wrapper/ros_noetic/avia_process.h"
+#include "wrapper/ros_noetic/velodyne_process.h"
 
 namespace ROSNoetic
 {
   enum LIDAR_TYPE
   {
     AVIA = 0,
+    VELO = 1
   };
   class IESKFFrontEndWrapper
   {

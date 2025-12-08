@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <yaml-cpp/yaml.h>//用于读取配置文件
-
+#include "colorful_terminal/colorful_terminal.hpp"
 
 namespace IESKFSlam
 {
@@ -11,9 +11,11 @@ namespace IESKFSlam
   private:
     YAML::Node config_node;
     std::string name;
+    std::shared_ptr<ctl::table_out> table_out_ptr;
   protected:
   ModuleBase(const std::string&config_path,const std::string&prefix, const std::string &module_name = "default"){
     name = module_name;
+    table_out_ptr = std::make_shared<ctl::table_out>(module_name);
     if(config_path !=""){
       try{
           config_node = YAML::LoadFile(config_path);
@@ -35,7 +37,12 @@ namespace IESKFSlam
     }else{
       val = default_value;
     }
+
+    table_out_ptr->add_item(key,VAR_NAME(val),val);//键的名称，值的类型，值
+
     }
+
+    void print_table(){table_out_ptr->make_table_and_out();}
   };
 }
 

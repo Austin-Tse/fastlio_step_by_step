@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 #include "ieskf_slam/modules/modules_base.h"
 #include "ieskf_slam/type/imu.h"
 #include "ieskf_slam/type/base_type.h"//pointcloud
@@ -9,6 +10,7 @@
 #include "ieskf_slam/type/measure_group.h"
 #include "ieskf_slam/modules/frontback_Propagate/frontback_propagate.h"
 #include "ieskf_slam/modules/frontend/lio_zh_model.h"
+#include "ieskf_slam/globaldefine.h"
 
 namespace IESKFSlam
 {
@@ -60,6 +62,11 @@ namespace IESKFSlam
 
       LIOZHModel::Ptr lio_zh_model_ptr;
       PCLPointCloudPtr filter_point_cloud_ptr;
+
+      // v7
+      bool enable_record = false;
+      std::string record_file_name;
+      std::fstream record_file;   //文件流
 
 
 

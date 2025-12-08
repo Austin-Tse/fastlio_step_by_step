@@ -14,7 +14,8 @@ namespace IESKFSlam
         kdtree_ptr = pcl::make_shared<KDTree>();
         readParam<float>("map_resolution",map_resolution,0.5f);
         readParam<float>("map_side_length_2",map_size_length_2,500.0f);
-        std::cout<<"[RectMapManager] map_resolution: "<<map_resolution<<", map_size_length_2: "<<map_size_length_2<<std::endl;
+        // std::cout<<"[RectMapManager] map_resolution: "<<map_resolution<<", map_size_length_2: "<<map_size_length_2<<std::endl;
+        print_table();
     }
 
     RectMapManager::~RectMapManager()
