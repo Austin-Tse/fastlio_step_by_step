@@ -69,7 +69,7 @@ SET(IESKF_SLAM_FILE
 
 
 SET(NOETIC_FRONTEND_WRAPPER_FILE
-    src/wrapper/ros_noetic/ieskf_frontend_noetic_wrapper.cpp
+    src/wrapper/ros_noetic/ieskf_slam_wrapper.cpp
         include/ieskf_slam/modules/ieskf/ieskf.h
         include/ieskf_slam/modules/map/rect_map_manager.h
         include/ieskf_slam/math/math.h

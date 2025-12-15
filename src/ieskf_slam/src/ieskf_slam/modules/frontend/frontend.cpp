@@ -87,8 +87,8 @@ namespace IESKFSlam
     }
 
     //传入点云数据
-    void FrontEnd::addPointCloud(const PointCloud&pointcloud){
-        pointcloud_deque.push_back(pointcloud);
+    void FrontEnd::addPointCloud(const Frame&frame){
+        frame_deque.push_back(frame);
         std::cout<<"receive cloud"<<std::endl;
     }
     bool FrontEnd::track(){
@@ -97,7 +97,7 @@ namespace IESKFSlam
 
             if(!imu_inited){
                 map_ptr->reset();
-                map_ptr->addScan(mg.cloud.cloud_ptr,Eigen::Quaterniond::Identity(),Eigen::Vector3d::Zero());
+                map_ptr->addScan(mg.frame.cloud_ptr,Eigen::Quaterniond::Identity(),Eigen::Vector3d::Zero());
                 initState(mg);
                 return false;
             }
@@ -111,9 +111,9 @@ namespace IESKFSlam
                       << x_before_update.position.transpose() << "], vel_norm: " 
                       << x_before_update.velocity.norm() << std::endl;
             
-            voxel_filter.setInputCloud(mg.cloud.cloud_ptr);
+            voxel_filter.setInputCloud(mg.frame.cloud_ptr);
             voxel_filter.filter(*filter_point_cloud_ptr);//滤波后的点云存储在filter
-            std::cout << "Point cloud: raw=" << mg.cloud.cloud_ptr->size() 
+            std::cout << "Point cloud: raw=" << mg.frame.cloud_ptr->size() 
                       << ", filtered=" << filter_point_cloud_ptr->size() << std::endl;
             
             ieskf_ptr->update();
@@ -156,16 +156,16 @@ namespace IESKFSlam
     bool FrontEnd::syncMeasureGroup(MeasureGroup&mg){
         //同步一帧点云和对应的imu数据
         mg.imus.clear();
-        mg.cloud.cloud_ptr->clear();
-        if ( pointcloud_deque.empty()||imu_deque.empty())
+        mg.frame.cloud_ptr->clear();
+        if ( frame_deque.empty()||imu_deque.empty())
         {
             return false;
         }
         ///. wait for imu
         double imu_end_time = imu_deque.back().time_stamp.sec();
         double imu_start_time = imu_deque.front().time_stamp.sec();
-        double cloud_start_time =pointcloud_deque.front().time_stamp.sec();
-        double cloud_end_time = pointcloud_deque.front().cloud_ptr->points.back().offset_time/1e9+cloud_start_time;
+        double cloud_start_time =frame_deque.front().time_stamp.sec();
+        double cloud_end_time = frame_deque.front().cloud_ptr->points.back().offset_time/1e9+cloud_start_time;
 
         //当imu末尾数据早于这一帧的pointcloud数据的结束点云数据，无法铺满两帧之间，点云后半段是空的
         if (imu_end_time<cloud_end_time){
@@ -175,14 +175,14 @@ namespace IESKFSlam
         //当imu的起始时间早于这一帧pointcloud数据的末尾，无法铺满两帧之间，点云后前段是空的
         if (imu_start_time>cloud_end_time)
         {
-            pointcloud_deque.pop_front();
+            frame_deque.pop_front();
             std::cout<<"imu_start_time>cloud_end_time"<<std::endl;
             return false;
         }
 
 
-        mg.cloud = pointcloud_deque.front();//取出点云数据
-        pointcloud_deque.pop_front();
+        mg.frame = frame_deque.front();//取出点云数据
+        frame_deque.pop_front();
         //设置点云的起始和结束时间
         mg.lidar_begin_time = cloud_start_time;
         mg.lidar_end_time = cloud_end_time;

@@ -1,5 +1,8 @@
 #pragma once
-#include <ieskf_slam/type/pointcloud.h>
+#ifndef PCL_NO_PRECOMPILE
+#define PCL_NO_PRECOMPILE
+#endif
+#include <ieskf_slam/type/frame.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/kdtree/kdtree_flann.h>
 // #include <voxel_grid.h>//使用ros自带的pcl

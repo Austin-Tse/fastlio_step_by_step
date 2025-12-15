@@ -9,11 +9,11 @@ namespace IESKFSlam
   using PCLPointPtr = pcl::PointCloud<Point>::Ptr;
   using PCLPointCloudPtr = PCLPointCloud::Ptr;
   using PCLPointCloudConstPtr = PCLPointCloud::ConstPtr;
-  struct PointCloud{
-    using Ptr = std::shared_ptr<PCLPointCloud>;//C++智能指针类型，用于自动管理PCLPointCloud对象的生命周期   using起别名
+  struct Frame{
+    using Ptr = std::shared_ptr<Frame>;//C++智能指针类型，用于自动管理Frame对象的生命周期   using起别名
     TimeStamp time_stamp;
     PCLPointPtr cloud_ptr;
-    PointCloud()
+    Frame()
     {
       cloud_ptr = pcl::make_shared<PCLPointCloud>();//定义为PCLPointCloud的共享指针，用于在多个组件间共享点云数据。
     }

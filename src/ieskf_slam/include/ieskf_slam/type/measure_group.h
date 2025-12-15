@@ -4,8 +4,9 @@
 
 #pragma once
 #include "ieskf_slam/type/imu.h"
-#include "ieskf_slam/type/pointcloud.h"
+#include "ieskf_slam/type/frame.h"
 #include <deque>
+#include "ieskf_slam/type/frame.h"
 
 namespace IESKFSlam
 {
@@ -14,6 +15,6 @@ namespace IESKFSlam
         double lidar_begin_time;
         double lidar_end_time;
         std::deque<IMU> imus;
-        PointCloud cloud;//结构体
+        Frame frame;//结构体
     };
 }

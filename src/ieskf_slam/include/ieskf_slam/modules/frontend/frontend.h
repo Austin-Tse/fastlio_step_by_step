@@ -4,7 +4,6 @@
 #include "ieskf_slam/modules/modules_base.h"
 #include "ieskf_slam/type/imu.h"
 #include "ieskf_slam/type/base_type.h"//pointcloud
-#include "ieskf_slam/type/pose.h"
 #include "ieskf_slam/modules/ieskf/ieskf.h"
 #include "ieskf_slam/modules/map/rect_map_manager.h"
 #include "ieskf_slam/type/measure_group.h"
@@ -23,7 +22,7 @@ namespace IESKFSlam
       //传入数据
 
       void addImu(const IMU& imu);
-      void addPointCloud(const PointCloud& pointcloud);
+      void addPointCloud(const Frame& frame);
 //      void addPose(const Pose& pose);
 
 
@@ -43,7 +42,7 @@ namespace IESKFSlam
       //存储从外部话题传入的imu数据
       std::deque<IMU> imu_deque;
       //存储从外部话题传入的点云数据
-      std::deque<PointCloud> pointcloud_deque;
+      std::deque<Frame> frame_deque;
 //      std::deque<Pose> pose_deque;
       PCLPointCloud current_pointcloud;
 

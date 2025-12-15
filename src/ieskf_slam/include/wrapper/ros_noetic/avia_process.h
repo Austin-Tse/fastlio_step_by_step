@@ -31,10 +31,10 @@ namespace ROSNoetic
     AVIAProcess(){}
     ~AVIAProcess(){}
     
-    bool process(const sensor_msgs::PointCloud2 &msg,IESKFSlam::PointCloud &cloud){
+    bool process(const sensor_msgs::PointCloud2 &msg,IESKFSlam::Frame &frame){
       pcl::PointCloud<avia_ros::Point> avia_cloud;
       pcl::fromROSMsg(msg,avia_cloud);
-      cloud.cloud_ptr->clear();
+      frame.cloud_ptr->clear();
       for (auto &&point:avia_cloud)//使用&&（右值引用）可以避免每次循环时拷贝avia_cloud中的元素，直接操作元素，提升代码性能
       {
         IESKFSlam::Point p;
@@ -44,10 +44,10 @@ namespace ROSNoetic
         p.intensity = point.intensity;
         p.ring = point.line;
         p.offset_time = point.offset_time;
-        cloud.cloud_ptr->push_back(p);//cloud是PC实例化的对象中的一个pc成员，所以使用push_back
+        frame.cloud_ptr->push_back(p);//cloud是PC实例化的对象中的一个pc成员，所以使用push_back
         /* code */
       }
-      cloud.time_stamp.fromNsec(msg.header.stamp.toNSec());
+      frame.time_stamp.fromNsec(msg.header.stamp.toNSec());
       return true;
     }
   };

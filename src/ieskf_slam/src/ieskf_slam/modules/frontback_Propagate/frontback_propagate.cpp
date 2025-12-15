@@ -8,7 +8,7 @@ namespace IESKFSlam
     FrontbackPropagate::~FrontbackPropagate() {}
     void FrontbackPropagate::propagate(IESKFSlam::MeasureGroup &mg, IESKF::Ptr ieskf_ptr) {
         //将每一帧的点云中的点按照采集的时间从大到小排序
-        std::sort(mg.cloud.cloud_ptr->points.begin(),mg.cloud.cloud_ptr->points.end(),[](Point x,Point y)->bool{return x.offset_time<y.offset_time;});
+        std::sort(mg.frame.cloud_ptr->points.begin(),mg.frame.cloud_ptr->points.end(),[](Point x,Point y)->bool{return x.offset_time<y.offset_time;});
         
         std::cout << "[PROPAGATE] IMU count: " << mg.imus.size() 
                   << ", time span: [" << mg.lidar_begin_time << ", " << mg.lidar_end_time 
@@ -27,7 +27,7 @@ namespace IESKFSlam
         const double & pcl_beg_time = mg.lidar_begin_time;
         const double & pcl_end_time = mg.lidar_end_time;
         //这一帧对应的点云数据
-        auto &pcl_out = *mg.cloud.cloud_ptr;
+        auto &pcl_out = *mg.frame.cloud_ptr;
         //获取当前状态
         auto imu_state = ieskf_ptr->getX();
         IMUPose.clear();

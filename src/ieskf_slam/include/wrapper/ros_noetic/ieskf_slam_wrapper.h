@@ -14,7 +14,7 @@ namespace ROSNoetic
     AVIA = 0,
     VELO = 1
   };
-  class IESKFFrontEndWrapper
+  class IESKFSlamWrapper
   {
   private:
     IESKFSlam::FrontEnd::Ptr front_end_ptr;
@@ -36,8 +36,8 @@ namespace ROSNoetic
     void run();
     void publishMsg();
   public:
-    IESKFFrontEndWrapper(ros::NodeHandle& nh);
-    ~IESKFFrontEndWrapper();
+    IESKFSlamWrapper(ros::NodeHandle& nh);
+    ~IESKFSlamWrapper();
   };
 
   

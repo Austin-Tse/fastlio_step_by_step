@@ -6,7 +6,7 @@
 
 #pragma once
 #include "ieskf_slam/modules/modules_base.h"
-#include "ieskf_slam/type/pointcloud.h"
+#include "ieskf_slam/type/frame.h"
 #include "ieskf_slam/type/base_type.h"
 #include "pcl/common/transforms.h"
 #include "ieskf_slam/math/math.h"

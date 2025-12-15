@@ -10,7 +10,7 @@ namespace ROSNoetic
   private:
     /* data */
   public:
-  virtual bool process(const sensor_msgs::PointCloud2 &msg,IESKFSlam::PointCloud& cloud) = 0;//纯虚函数
+  virtual bool process(const sensor_msgs::PointCloud2 &msg,IESKFSlam::Frame& frame) = 0;//纯虚函数
   };
   
   

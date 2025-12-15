@@ -1,4 +1,4 @@
-#include "wrapper/ros_noetic/ieskf_frontend_noetic_wrapper.h"
+#include "wrapper/ros_noetic/ieskf_slam_wrapper.h"
 #include "ieskf_slam/globaldefine.h"
 
 #include "nav_msgs/Path.h"
@@ -6,7 +6,7 @@
 
 namespace ROSNoetic
 {
-  IESKFFrontEndWrapper::IESKFFrontEndWrapper(ros::NodeHandle &nh)
+  IESKFSlamWrapper::IESKFSlamWrapper(ros::NodeHandle &nh)
   {
     std::string config_file_name,lidar_topic,imu_topic;
     nh.param<std::string>("wrapper/config_file_name",config_file_name,"");
@@ -19,9 +19,9 @@ namespace ROSNoetic
     std::cout <<"WORKD_DIR: %s"<<WORKD_DIR.c_str()<<std::endl;
 
     //发布者和订阅者
-    cloud_subscriber = nh.subscribe(lidar_topic,100,&IESKFFrontEndWrapper::lidarCloudMsgCallBack,this);
-    imu_subscriber = nh.subscribe(imu_topic,100,&IESKFFrontEndWrapper::imuMsgCallBack,this);
-//    odometry_subscriber = nh.subscribe("/odometry",100,&IESKFFrontEndWrapper::odometryMsgCallBack,this);
+    cloud_subscriber = nh.subscribe(lidar_topic,100,&IESKFSlamWrapper::lidarCloudMsgCallBack,this);
+    imu_subscriber = nh.subscribe(imu_topic,100,&IESKFSlamWrapper::imuMsgCallBack,this);
+//    odometry_subscriber = nh.subscribe("/odometry",100,&IESKFSlamWrapper::odometryMsgCallBack,this);
 
 
 
@@ -46,18 +46,18 @@ namespace ROSNoetic
     run();
   }
 
-    IESKFFrontEndWrapper::~IESKFFrontEndWrapper()
+    IESKFSlamWrapper::~IESKFSlamWrapper()
   {
 
   }
-    void IESKFFrontEndWrapper::lidarCloudMsgCallBack(const sensor_msgs::PointCloud2ConstPtr&msg)
+    void IESKFSlamWrapper::lidarCloudMsgCallBack(const sensor_msgs::PointCloud2ConstPtr&msg)
     {
-      IESKFSlam::PointCloud cloud;
-      lidar_process_ptr->process(*msg,cloud);
-      front_end_ptr->addPointCloud(cloud);
+      IESKFSlam::Frame frame;
+      lidar_process_ptr->process(*msg,frame);
+      front_end_ptr->addPointCloud(frame);
     }
 
-    void IESKFFrontEndWrapper::imuMsgCallBack(const sensor_msgs::ImuPtr &msg)
+    void IESKFSlamWrapper::imuMsgCallBack(const sensor_msgs::ImuPtr &msg)
     {
       IESKFSlam::IMU imu;
       imu.time_stamp.fromNsec(msg->header.stamp.toNSec());
@@ -66,7 +66,7 @@ namespace ROSNoetic
       front_end_ptr->addImu(imu);
     }
 
-//    void IESKFFrontEndWrapper::odometryMsgCallBack(const nav_msgs::OdometryPtr& msg)
+//    void IESKFSlamWrapper::odometryMsgCallBack(const nav_msgs::OdometryPtr& msg)
 //    {
 //      IESKFSlam::Pose pose;
 //      pose.time_stamp.fromNsec(msg->header.stamp.toNSec());
@@ -78,7 +78,7 @@ namespace ROSNoetic
 //      front_end_ptr->addPose(pose);
 //    }
 
-    void IESKFFrontEndWrapper::run(){
+    void IESKFSlamWrapper::run(){
       ros::Rate rate(500);
       while (ros::ok())
       {
@@ -94,7 +94,7 @@ namespace ROSNoetic
 
     }
 
-    void IESKFFrontEndWrapper::publishMsg()
+    void IESKFSlamWrapper::publishMsg()
     {
 //      auto cloud = front_end_ptr->readCurrentPointCloud();
 //      sensor_msgs::PointCloud2 msg;
