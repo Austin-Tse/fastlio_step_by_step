@@ -1,4 +1,4 @@
-#include "wrapper/ros_noetic/ieskf_slam_wrapper.h"
+#include "wrapper/ros_noetic/ieskf_frontend_noetic_wrapper.h"
 #include "ieskf_slam/globaldefine.h"
 
 #include "nav_msgs/Path.h"
@@ -41,8 +41,10 @@ namespace ROSNoetic
       exit(100);//如果报错退出，那么可以捕获100
     }
     curr_cloud_pub = nh.advertise<sensor_msgs::PointCloud2>("curr_cloud",100);
+    local_map_pub = nh.advertise<sensor_msgs::PointCloud2>("local_map",100);
     //发布Path
     path_pub = nh.advertise<nav_msgs::Path>("path",100);
+    cloud_with_pose_pub = nh.advertise<ieskf_slam::CloudWithPose>("cloud_with_pose",100);
     run();
   }
 
@@ -120,16 +122,24 @@ namespace ROSNoetic
         msg.header.frame_id = "map";
         curr_cloud_pub.publish(msg);//发布话题信息
 
+        cloud  = front_end_ptr->readCurrentFullPointCloud();
+        pcl::toROSMsg(cloud,msg);
+        msg.header.frame_id = "map";
+        local_map_pub.publish(msg);//发布话题信息
+
+        ieskf_slam::CloudWithPose cloud_with_pose_msg;
+
+        cloud = front_end_ptr->readCurrentFullPointCloud();
+        pcl::toROSMsg(cloud,cloud_with_pose_msg.pointcloud);
+        cloud_with_pose_msg.pose.position = psd.pose.position;
+        cloud_with_pose_msg.pose.orientation.w = X.rotation.w();
+        cloud_with_pose_msg.pose.orientation.x = X.rotation.x();
+        cloud_with_pose_msg.pose.orientation.y = X.rotation.y();
+        cloud_with_pose_msg.pose.orientation.z = X.rotation.z();
+        // 发布包含位姿的点云消息
+        cloud_with_pose_pub.publish(cloud_with_pose_msg);
+        
+
 
     }
-    // void IESKFF lidarCloudMsgCallBack(const sensor_msgs::PointCloud2ConstPtr& msg)
-    // {
-
-    // }
-    // void imuMsgCallBack(const sensor_msgs::ImuPtr& msg)
-    // void odometryMsgCallBack(const nav_msgs::OdometryPtr& msg)
-    // void run()
-    // void publishMsg()
-
-
 } // namespace ROSNoetic

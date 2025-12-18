@@ -105,7 +105,7 @@ namespace IESKFSlam
             frame_count++;
             
             fbpropagate_ptr->propagate(mg,ieskf_ptr);
-            
+            full_point_cloud_ptr = mg.cloud.cloud_ptr;
             auto x_before_update = ieskf_ptr->getX();
             std::cout << "\n[FRAME #" << frame_count << "] Before update - pos: [" 
                       << x_before_update.position.transpose() << "], vel_norm: " 
@@ -152,7 +152,12 @@ namespace IESKFSlam
         return *filter_point_cloud_ptr;
     }
 
-
+    const PCLPointCloud& FrontEnd::readCurrentFullPointCloud(){
+        return *full_point_cloud_ptr;
+    }
+    const PCLPointCloud& FrontEnd::readCurrentLocalPointCloud(){
+        return *map_ptr->getLocalMap();
+    }
     bool FrontEnd::syncMeasureGroup(MeasureGroup&mg){
         //同步一帧点云和对应的imu数据
         mg.imus.clear();

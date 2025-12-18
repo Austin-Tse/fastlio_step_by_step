@@ -6,6 +6,8 @@
 #include "nav_msgs/Odometry.h"
 #include "wrapper/ros_noetic/avia_process.h"
 #include "wrapper/ros_noetic/velodyne_process.h"
+#include "ieskf_slam/CloudWithPose.h"
+
 
 namespace ROSNoetic
 {
@@ -22,8 +24,9 @@ namespace ROSNoetic
     ros::Subscriber imu_subscriber;
 //    ros::Subscriber odometry_subscriber;
     ros::Publisher curr_cloud_pub;
-
+    ros::Publisher local_map_pub;
     ros::Publisher path_pub;
+    ros::Publisher cloud_with_pose_pub;
 
     std::shared_ptr<CommonLidarProcessInterface> lidar_process_ptr;
 

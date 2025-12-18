@@ -7,6 +7,7 @@
 #include "ieskf_slam/type/frame.h"
 #include <deque>
 #include "ieskf_slam/type/frame.h"
+#include "ieskf_slam/type/pointcloud.h"
 
 namespace IESKFSlam
 {
@@ -16,5 +17,6 @@ namespace IESKFSlam
         double lidar_end_time;
         std::deque<IMU> imus;
         Frame frame;//结构体
+        PointCloud cloud;
     };
 }

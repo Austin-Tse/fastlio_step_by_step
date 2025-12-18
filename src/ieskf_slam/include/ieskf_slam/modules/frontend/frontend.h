@@ -30,9 +30,10 @@ namespace IESKFSlam
       bool track();
       //点云读取
       const PCLPointCloud &readCurrentPointCloud();
+      const PCLPointCloud &readCurrentFullPointCloud();
+      const PCLPointCloud &readCurrentLocalPointCloud();
       bool syncMeasureGroup(MeasureGroup&mg);
       void initState(MeasureGroup&mg);
-
 
       //读取状态  State定义在IESKF中
       IESKF::State18 readState();
@@ -60,12 +61,13 @@ namespace IESKFSlam
       Eigen::Vector3d extrin_t_v;
 
       LIOZHModel::Ptr lio_zh_model_ptr;
-      PCLPointCloudPtr filter_point_cloud_ptr;
+      PCLPointCloudPtr filter_point_cloud_ptr,full_point_cloud_ptr;
 
       // v7
       bool enable_record = false;
       std::string record_file_name;
       std::fstream record_file;   //文件流
+
 
 
 

@@ -24,12 +24,25 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   sensor_msgs
+  geometry_msgs
+  message_generation
 )
 
+add_message_files(
+  FILES
+  CloudWithPose.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  sensor_msgs
+  geometry_msgs
+)
 find_package(PCL REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(OpenCV REQUIRED)
+find_package(Ceres REQUIRED)
 
 # YAML CPP
 find_package(PkgConfig REQUIRED)
@@ -50,6 +63,7 @@ include
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
   ${YAML_CPP_INCLUDEDIR}
+  ${CERES_INCLUDE_DIRS}
 )
 
 
@@ -64,21 +78,20 @@ SET(IESKF_SLAM_FILE
         src/ieskf_slam/modules/ieskf/ieskf.cpp
         src/ieskf_slam/modules/map/rect_map_manager.cpp
         src/ieskf_slam/modules/frontback_Propagate/frontback_propagate.cpp
+        src/ieskf_slam/modules/pose_graph_opt/pose_graph_opt.cpp
 )
 
-
+SET(BACKEND_FILE
+        src/ieskf_slam/modules/backend/backend.cpp
+        lib/scan_context/Scancontext.cpp
+)
 
 SET(NOETIC_FRONTEND_WRAPPER_FILE
-    src/wrapper/ros_noetic/ieskf_slam_wrapper.cpp
-        include/ieskf_slam/modules/ieskf/ieskf.h
-        include/ieskf_slam/modules/map/rect_map_manager.h
-        include/ieskf_slam/math/math.h
-        include/ieskf_slam/type/measure_group.h
-        src/ieskf_slam/modules/map/rect_map_manager.cpp
-        src/ieskf_slam/modules/ieskf/ieskf.cpp
-        include/ieskf_slam/math/SO3.h
-        include/ieskf_slam/modules/frontback_Propagate/frontback_propagate.h
-        src/ieskf_slam/modules/frontback_Propagate/frontback_propagate.cpp
+    src/wrapper/ros_noetic/ieskf_frontend_noetic_wrapper.cpp
+)
+
+SET(NOETIC_BACKEND_WRAPPER_FILE
+    src/wrapper/ros_noetic/ieskf_backend_noetic_wrapper.cpp
 )
 
 ## Declare a C++ executable
@@ -92,5 +105,22 @@ ${NOETIC_FRONTEND_WRAPPER_FILE}
 target_link_libraries(ieskf_frontend_node
   ${catkin_LIBRARIES}
   ${PCL_LIBRARIES}
-${YAML_CPP_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+  ${CERES_LIBRARIES}
+)
+
+
+add_executable(ieskf_backend_node src/app/ros_noetic/ieskf_noetic_backend_node.cpp
+${NOETIC_BACKEND_WRAPPER_FILE}
+${IESKF_SLAM_FILE}
+${BACKEND_FILE}
+)
+
+target_link_libraries(ieskf_backend_node
+  ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+  ${CERES_LIBRARIES}
 )
