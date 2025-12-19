@@ -17,3 +17,7 @@ dataset/street_05_lig.bag
 dataset/street_08_filter.bag
 dataset/street08_cloud_pose.bag
 2025-12-15-18-20-23.bag
+
+# Ignore large dataset files
+dataset/*.bag
+*.bag
